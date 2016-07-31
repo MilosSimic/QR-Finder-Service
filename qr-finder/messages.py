@@ -22,11 +22,12 @@ class Return(messages.Message):
 	message = messages.StringField(1)
 
 class ItemLog(messages.Message):
-	item = messages.MessageField(InsertItem, 1)
-	newprice = messages.FloatField(2)
-	discount = messages.IntegerField(3)
-	amount = messages.IntegerField(4)
-	selldate = messages.StringField(5)
+	price = messages.FloatField(1)
+	name = messages.StringField(2)
+	newprice = messages.FloatField(3)
+	discount = messages.IntegerField(4)
+	amount = messages.IntegerField(5)
+	selldate = messages.StringField(6)
 
 class ItemLogCollection(messages.Message):
     """Collection of Greetings."""

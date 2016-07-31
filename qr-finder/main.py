@@ -32,14 +32,16 @@ class ItemReaderAPI(remote.Service):
 			log.amount = request.amount
 
 			if request.discount > 0:
-				old_price = item.key.get().price - (item.key.get().price / request.discount)
+				old_price = item.key.get().price - (item.key.get().price * (float(request.discount) / 100.0))
 				log.newprice = old_price
 			else:
 				log.newprice = item.key.get().price
 
 			log.put()
 
-			return Return(message="Item sold")
+			print item.key.get().name.encode('utf-8').strip(), log.newprice
+
+			return Return(message="{} sold, total price: {}".format(item.key.get().name.encode('utf-8').strip(), log.newprice))
 
 		return Return(message="Item not exists")
 
@@ -61,9 +63,9 @@ class ItemReaderAPI(remote.Service):
 
 		for record in LogModel.query():
 			item = record.item.get()
-			item_log = InsertItem(uuid = item.key.id(), price = item.price, name = item.name, description = item.description)
 
-			log = ItemLog(item = item_log, newprice = record.newprice, discount = record.discount, amount = record.amount, selldate = str(record.selldate))
+			log = ItemLog(price = item.price, name = item.name, newprice = record.newprice, discount = record.discount, 
+				amount = record.amount, selldate = str(record.selldate))
 			my_items.append(log)
 
 		return ItemLogCollection(items = my_items)
@@ -78,7 +80,8 @@ class ItemReaderAPI(remote.Service):
 				item = record.item.get()
 				item_log = InsertItem(uuid = item.key.id(), price = item.price, name = item.name, description = item.description)
 
-				log = ItemLog(item = item_log, newprice = record.newprice, discount = record.discount, amount = record.amount, selldate = str(record.selldate))
+				log = ItemLog(item = item_log, newprice = record.newprice, discount = record.discount, amount = record.amount, 
+					selldate = str(record.selldate))
 				my_items.append(log)
 
 		return ItemLogCollection(items = my_items)
